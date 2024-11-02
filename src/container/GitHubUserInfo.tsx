@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ComponentProps } from "react";
+import UserProfile from "./UserProfile";
 
 const ACCOUNT_ID = "rutago44";
 
+type UserProfileProps = ComponentProps<typeof UserProfile>;
+
 function GitHubUserInfo() {
-  const [userInfo, setUserInfo] = useState<JSON>();
+  const [userInfo, setUserInfo] = useState<UserProfileProps | null>(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -14,14 +17,18 @@ function GitHubUserInfo() {
         }
         return response.json();
       })
-      .then((data) => setUserInfo(data as JSON))
+      .then((data) => setUserInfo(data as UserProfileProps))
       .catch((error) => setError(error.message));
   }, []);
 
   if (error) return <div>Error: {error}</div>;
   if (!userInfo) return <div>Loading...</div>;
 
-  return <div>{JSON.stringify(userInfo)}</div>;
+  return (
+    <div>
+      <UserProfile {...userInfo}></UserProfile>
+    </div>
+  );
 }
 
 export default GitHubUserInfo;
